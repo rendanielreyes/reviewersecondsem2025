@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Topic 4 (40)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Topic 4 (40)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+{
+  q: "Which of the following institutions was the pioneer microfinance NGO founded in 1986 under CARD MRI?",
+  options: ["CARD Bank, Inc.", "CARD, Inc.", "CARD SME Bank", "CARD MBA"],
+  answer: 1
+},
+{
+  q: "CARD Bank, Inc. was established in 1997 to provide financial inclusion for which primary group?",
+  options: ["Urban poor communities", "Small and medium enterprises", "Poor women considered non-bankable", "Government employees"],
+  answer: 2
+},
+{
+  q: "Which CARD MRI institution provides life and loan insurance products tailored for microfinance clients?",
+  options: ["CARD MBA", "CaMIA", "CPMI", "CARD SME Bank"],
+  answer: 0
+},
+{
+  q: "CMDI, Inc. evolved into an educational institution offering degrees and SHS tracks. In what year did it begin as a unit under CARD, Inc.?",
+  options: ["1986", "1989", "1997", "2005"],
+  answer: 1
+},
+{
+  q: "CaMIA, Inc. established in 2007 provides which type of services?",
+  options: ["Banking loans", "Insurance brokerage and disaster assistance", "Publishing and communications", "Healthcare and pharmacy"],
+  answer: 1
+},
+{
+  q: "Which CARD MRI bank specializes in serving graduate microfinance clients ready to own SMEs?",
+  options: ["CARD Bank", "CARD SME Bank", "CARD RBI", "CLFC"],
+  answer: 1
+},
+{
+  q: "CARD BDSFI bridges microentrepreneur clients with the mainstream market by focusing on which activity?",
+  options: ["Insurance underwriting", "Marketing local products", "Providing IT services", "Offering healthcare"],
+  answer: 1
+},
+{
+  q: "CMIT, Inc. formed in 2010 provides which type of support to CARD MRI?",
+  options: ["Legal consultancy", "Information technology services", "Insurance claims processing", "Retail distribution"],
+  answer: 1
+},
+{
+  q: "BotiCARD Pharmacy primarily offers which of the following to CARD members?",
+  options: ["Discounted generic medicines", "Life insurance policies", "Educational scholarships", "Tourism packages"],
+  answer: 0
+},
+{
+  q: "CARD Rizal Bank, Inc. was acquired in 2013 to focus on which community group?",
+  options: ["Urban poor", "Rural farmers", "Graduate scholars", "Government employees"],
+  answer: 0
+},
+{
+  q: "CLFC, Inc. founded in 2013 helps clients engage in which activity?",
+  options: ["Leasing", "Insurance", "Publishing", "Tourism"],
+  answer: 0
+},
+{
+  q: "CPMI, Inc. introduced non-life microinsurance in the Philippines through a partnership with which company?",
+  options: ["Pioneer", "Fortress Data Services", "CMDI", "Astro Laboratories"],
+  answer: 0
+},
+{
+  q: "Mga Likha ni Inay (MLNI) promotes locally sourced materials by microentrepreneurs. In what year was it registered?",
+  options: ["2004", "2010", "2014", "2017"],
+  answer: 2
+},
+{
+  q: "CARD EMPC was formed into a cooperative in 2004 to provide which services to employees?",
+  options: ["Insurance", "Savings and credit", "Publishing", "Tourism"],
+  answer: 1
+},
+{
+  q: "Fortress Data Services PTE. LTD. was incorporated in Singapore in 2016 to provide which services?",
+  options: ["Software development and consultancy", "Insurance brokerage", "Healthcare services", "Retail distribution"],
+  answer: 0
+},
+{
+  q: "CARD MRI Holdings, Inc. established in 2016 is primarily engaged in which activity?",
+  options: ["Retail operations", "Investment and ownership of corporations", "Publishing", "Healthcare"],
+  answer: 1
+},
+{
+  q: "FDS Asya Philippines, Inc. established in 2016 provides shared services for which industry?",
+  options: ["Tourism", "Banking applications", "Healthcare", "Retail"],
+  answer: 1
+},
+{
+  q: "CARD MRI Property Holdings, Inc. established in 2016 manages which type of assets?",
+  options: ["Insurance portfolios", "Real estate and buildings", "Educational programs", "Retail outlets"],
+  answer: 1
+},
+{
+  q: "CARD MRI Hijos Tours, Inc. promotes tourism and heritage in which city?",
+  options: ["San Pablo City", "Manila", "Cebu City", "Davao City"],
+  answer: 0
+},
+{
+  q: "CARD MRI Publishing House, Inc. established in 2017 aims to provide what to clients?",
+  options: ["Progressive and positive stories", "Insurance policies", "Healthcare services", "Retail goods"],
+  answer: 0
+},
+{
+  q: "CARD Astro Laboratory, Inc. established in 2019 focuses on producing which type of products?",
+  options: ["Cosmetics and health products", "Insurance policies", "Educational materials", "Retail goods"],
+  answer: 0
+},
+{
+  q: "CARD Masikhay Consultancy Services, Inc. registered in 2022 primarily provides which type of services?",
+  options: ["Financial consultancy and advisory", "Healthcare services", "Publishing", "Tourism"],
+  answer: 0
+},
+{
+  q: "Padayon Microfinance, Inc. provides credit services to which group?",
+  options: ["Government employees", "Young entrepreneurs and students", "Urban poor communities", "Tourism operators"],
+  answer: 1
+},
+{
+  q: "CARD Indogrosir founded in 2023 operates as which type of business?",
+  options: ["Hybrid B2B & B2C retail", "Insurance brokerage", "Publishing", "Healthcare"],
+  answer: 0
+},
+{
+  q: "CARD PCPD Medical Center opened in 2025 offers which of the following services?",
+  options: ["General healthcare consultations", "Insurance underwriting", "Publishing", "Retail distribution"],
+  answer: 0
+},
+{
+  q: "Which CARD MRI institution provides affordable medicines and health protection programs?",
+  options: ["BotiCARD Pharmacy", "CARD MBA", "CMDI", "MLNI"],
+  answer: 0
+},
+{
+  q: "CARD MRI’s repayment rate as of November 2025 was recorded at what percentage?",
+  options: ["95.5%", "97.8%", "99.27%", "100%"],
+  answer: 2
+},
+{
+  q: "CARD MRI’s total number of insured persons as of November 2025 was approximately:",
+  options: ["9 million", "18 million", "29.9 million", "45 million"],
+  answer: 2
+},
+{
+  q: "Which award did CARD MRI receive in 2008 for its public service?",
+  options: ["Nobel Peace Prize", "Ramon Magsaysay Award", "ASEAN Service Award", "UNDP Development Award"],
+  answer: 1
+},
+{
+  q: "CARD MRI’s vision emphasizes improving the quality of life of which primary group?",
+  options: ["Government employees", "Socially and economically challenged women and families", "Urban professionals", "Tourism operators"],
+  answer: 1
+},
+{
+  q: "CARD MRI’s mission includes enabling women members to gain control and ownership of what?",
+  options: ["Financial and social development enterprises", "Tourism businesses", "Government agencies", "Educational institutions"],
+  answer: 0
+},
+{
+  q: "Which CARD MRI institution provides IT services such as web design and technical assistance?",
+  options: ["CMIT", "CMDI", "CARD MBA", "MLNI"],
+  answer: 0
+},
+{
+  q: "OttoKonek is a CARD MRI application designed to help which type of entrepreneurs?",
+  options: ["Farmers", "Sari-sari store owners", "Tourism operators", "Healthcare providers"],
+  answer: 1
+},
+{
+  q: "OttoKonek allows users to perform which of the following?",
+  options: ["Order supplies, track sales, accept digital payments", "Publish educational materials", "Provide healthcare consultations", "Offer insurance policies"],
+  answer: 0
+},
+{
+  q: "Laguna Fresh is a CARD MRI initiative under which industry?",
+  options: ["Manufacturing - Food and Beverages", "Insurance", "Publishing", "Tourism"],
+  answer: 0
+},
+{
+  q: "CARD MRI’s international presence began in Cambodia in which year?",
+  options: ["2005", "2006", "2007", "2008"],
+  answer: 1
+},
+{
+  q: "CARD MRI established a partnership program in Vietnam with TYM in which year?",
+  options: ["2005", "2007", "2009", "2012"],
+  answer: 0
+},
+{
+  q: "CARD MRI’s partnership program in Myanmar began in 2012, with operations starting in which year?",
+  options: ["2012", "2013", "2014", "2015"],
+  answer: 2
+},
+{
+  q: "Which CARD MRI institution links grassroots microentrepreneurs to mainstream markets through gift products?",
+  options: ["MLNI", "CMDI", "CARD MBA", "CaMIA"],
+  answer: 0
+},
+{
+q: "CARD MRI’s business model describes CARD Bank and RBI absorbing CARD, Inc. branches once what condition is met?",
+options: ["Clients graduate", "License approved by BSP", "Insurance policies mature", "Educational programs completed"],
+answer: 1
+},
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>

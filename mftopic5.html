@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Topic 5 (39)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Topic 5 (39)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+{
+  q: "Which of the following is considered an internal source of funding for Microfinance Institutions (MFIs)?",
+  options: ["Grants from NGOs", "Savings/Capital build-up of members", "Loans from commercial banks", "Donations from international agencies"],
+  answer: 1
+},
+{
+  q: "Personal contributions or equity of the founder and incorporators are classified under which type of funding source?",
+  options: ["External Source", "Internal Source", "Commercial Bank Loan", "International Grant"],
+  answer: 1
+},
+{
+  q: "Which internal source of funding comes from income earned through loan interest and other financial services?",
+  options: ["Savings of members", "Founder’s equity", "Interest income", "Staff contributions"],
+  answer: 2
+},
+{
+  q: "External sources of funding for MFIs include which of the following?",
+  options: ["Staff contributions", "Interest income", "Grants and donations", "Founder’s equity"],
+  answer: 2
+},
+{
+  q: "Which of the following is NOT an international agency listed as CARD’s initial source of funding?",
+  options: ["USAID", "UNCDF", "CIDA", "BPI"],
+  answer: 3
+},
+{
+  q: "Peace Equity Foundation (PEF) was founded in which year?",
+  options: ["1970", "1975", "2001", "2005"],
+  answer: 2
+},
+{
+  q: "Philippine Business for Social Progress (PBSP) was founded in which year?",
+  options: ["1970", "1975", "2001", "2009"],
+  answer: 0
+},
+{
+  q: "Which local foundation focuses on CSR efforts in education, enterprise development, and environment, and responds during calamities?",
+  options: ["PBSP", "Assisi Development Foundation", "Aboitiz Foundation", "Peace Equity Foundation"],
+  answer: 2
+},
+{
+  q: "Which of the following is a requirement to access grant funds from international agencies?",
+  options: ["At least 1–3 years of microfinance experience", "Collateral from commercial banks", "Minimum of 10 years of audited financial statements", "Exclusive partnership with PBSP"],
+  answer: 0
+},
+{
+  q: "Which of the following is NOT a common criterion to access loanable funds from commercial banks?",
+  options: ["At least 5 years proven track record in microfinance", "Audited financial statements", "Collateral or guarantees", "Exclusive funding from international agencies"],
+  answer: 3
+},
+{
+  q: "Which commercial bank is listed as a source of funding for MFIs?",
+  options: ["USAID", "GTZ", "Metrobank", "IFAD"],
+  answer: 2
+},
+{
+  q: "Which foundation inaugurated the BDO Foundation Micro-Finance Center in 2009?",
+  options: ["PBSP", "BDO Foundation", "Aboitiz Foundation", "Assisi Development Foundation"],
+  answer: 1
+},
+{
+  q: "Which of the following is a disadvantage of relying solely on client savings as a funding source?",
+  options: ["Limited scale and slower growth", "Dependency on external donors", "Strict donor criteria", "High collateral requirements"],
+  answer: 0
+},
+{
+  q: "Which of the following is an advantage of external grants and funds?",
+  options: ["Faster expansion and larger capital", "Less dependency on donors", "Guaranteed profitability", "No need for audited financial statements"],
+  answer: 0
+},
+{
+  q: "Which international agency is known as the United Nations Capital Development Fund?",
+  options: ["USAID", "UNCDF", "CIDA", "GTZ"],
+  answer: 1
+},
+{
+  q: "Which agency is the Canadian International Development Agency?",
+  options: ["CIDA", "USAID", "AUSAID", "IFAD"],
+  answer: 0
+},
+{
+  q: "Which agency is the Australian Agency for International Development?",
+  options: ["GTZ", "AUSAID", "CIDA", "UNCDF"],
+  answer: 1
+},
+{
+  q: "Which organization is the Consultative Group to Assist the Poorest?",
+  options: ["CGAP", "IFAD", "ILO", "USAID"],
+  answer: 0
+},
+{
+  q: "Which of the following is a local foundation that provides innovative programs for marginalized communities?",
+  options: ["PBSP", "Assisi Development Foundation", "Aboitiz Foundation", "Peace Equity Foundation"],
+  answer: 1
+},
+{
+  q: "Which of the following is a requirement for accessing commercial bank loans?",
+  options: ["At least 5 years of audited financial statements", "Exclusive partnership with international agencies", "Minimum of 1 year of microfinance operations", "No need for collateral"],
+  answer: 0
+},
+{
+  q: "Which of the following is a common requirement for both grants and loanable funds?",
+  options: ["Juridical personality (SEC, BSP)", "Exclusive donor partnership", "Minimum collateral of 50%", "No audited financial statements required"],
+  answer: 0
+},
+{
+  q: "Which of the following is NOT a local source of funding mentioned in the document?",
+  options: ["Peace Equity Foundation", "PBSP", "Assisi Development Foundation", "World Bank"],
+  answer: 3
+},
+{
+  q: "Which of the following is a member of the League of Corporate Foundations?",
+  options: ["PBSP", "Aboitiz Foundation", "BDO Foundation", "All of the above"],
+  answer: 3
+},
+{
+  q: "Which of the following is a requirement for accessing international grants?",
+  options: ["Active board", "Collateral from banks", "Exclusive donor partnership", "Minimum of 10 years of operations"],
+  answer: 0
+},
+{
+  q: "Which of the following is a disadvantage of external grants?",
+  options: ["Dependency risk and donor influence", "Limited scale", "Slow growth", "No audited financial statements required"],
+  answer: 0
+},
+{
+  q: "Which of the following is an internal source of funding contributed by staff and officers?",
+  options: ["Grants", "Equity contributions", "Staff contributions", "Commercial loans"],
+  answer: 2
+},
+{
+  q: "Which of the following is a requirement for accessing loanable funds from banks?",
+  options: ["Functioning board committees", "Exclusive donor partnership", "Minimum collateral of 10%", "No audited financial statements"],
+  answer: 0
+},
+{
+  q: "Which of the following is NOT listed as a commercial bank source of funding?",
+  options: ["BPI", "BDO", "Metrobank", "USAID"],
+  answer: 3
+},
+{
+  q: "Which of the following is a requirement for accessing grants from local foundations?",
+  options: ["At least 5 years proven track record", "Active board with diverse expertise", "Audited financial statements", "All of the above"],
+  answer: 3
+},
+{
+  q: "Which of the following is a local foundation founded in 1975?",
+  options: ["PBSP", "Assisi Development Foundation", "Aboitiz Foundation", "Peace Equity Foundation"],
+  answer: 1
+},
+{
+  q: "Which of the following is a local foundation founded in 1970?",
+  options: ["PBSP", "Assisi Development Foundation", "Aboitiz Foundation", "Peace Equity Foundation"],
+  answer: 0
+},
+{
+  q: "Which of the following is a local foundation founded in 2001?",
+  options: ["PBSP", "Assisi Development Foundation", "Aboitiz Foundation", "Peace Equity Foundation"],
+  answer: 3
+},
+{
+  q: "Which of the following is a requirement for accessing commercial bank loans?",
+  options: ["Due diligence on board members", "Exclusive donor partnership", "No collateral required", "Minimum of 1 year of operations"],
+  answer: 0
+},
+{
+  q: "Which of the following is a requirement for accessing grants from international agencies?",
+  options: ["At least 1–3 years of audited financial statements", "Exclusive donor partnership", "Collateral from banks", "Minimum of 10 years of operations"],
+  answer: 0
+},
+{
+  q: "Which of the following is a requirement for accessing loanable funds from banks?",
+  options: ["Financial statement shows profitable operations", "Exclusive donor partnership", "No collateral required", "Minimum of 1 year of operations"],
+  answer: 0
+},
+{
+  q: "Which of the following is a requirement for accessing grants from local foundations?",
+  options: ["Active board with diverse expertise", "Exclusive donor partnership", "No audited financial statements required", "Minimum collateral of 10%"],
+  answer: 0
+},
+{
+  q: "Which of the following is a requirement for accessing commercial bank loans?",
+  options: ["Readiness to provide collateral or guarantees", "Exclusive donor partnership", "No audited financial statements required", "Minimum of 1 year of operations"],
+  answer: 0
+},
+{
+  q: "Which of the following is a requirement for accessing grants from international agencies?",
+  options: ["Working with poor sector of society", "Exclusive donor partnership", "No audited financial statements required", "Minimum collateral of 10%"],
+  answer: 0
+},
+{
+q: "Which of the following is a requirement for accessing loanable funds from banks?",
+options: ["No derogatory record for board members", "Exclusive donor partnership", "No audited financial statements required", "Minimum of 1 year of operations"],
+answer: 0
+},
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
