@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Week 15 topic (40)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Week 15 topic Reviewer (40)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+
+{
+  q: "Which of the following is the primary vision of CARD MRI?",
+  options: ["To be a world-class leader in microfinance and community-based social development", "To provide loans only to urban poor", "To focus solely on insurance services", "To eliminate competition among MFIs"],
+  answer: 0
+},
+{
+  q: "CARD MRI’s mission includes empowering which group primarily?",
+  options: ["Government agencies", "Socially and economically challenged women and families", "Large corporations", "Foreign investors"],
+  answer: 1
+},
+{
+  q: "Which of the following is NOT a factor to consider in starting an MFI?",
+  options: ["Vision, mission, and goals", "Clients", "Products and services", "Celebrity endorsements"],
+  answer: 3
+},
+{
+  q: "What is one of the three basic principles for smooth MFI implementation?",
+  options: ["Focus only on donor subsidies", "Sustained access to financial services", "Avoid training staff", "Limit outreach to urban areas"],
+  answer: 1
+},
+{
+  q: "Which principle emphasizes that poor people have the ability to repay loans and save?",
+  options: ["Financial and operational sufficiency", "Poor people’s capacity to pay and save", "Government as enabler", "Transparency in outreach"],
+  answer: 1
+},
+{
+  q: "What year was CGAP established?",
+  options: ["1990", "1995", "2000", "2005"],
+  answer: 1
+},
+{
+  q: "CGAP is a global partnership of how many leading development organizations?",
+  options: ["20+", "30+", "40+", "50+"],
+  answer: 2
+},
+{
+  q: "Which of the following is a CGAP key principle?",
+  options: ["The poor need a variety of financial services, not just loans", "Microfinance should only provide credit", "Interest rate ceilings always help the poor", "Government must directly provide financial services"],
+  answer: 0
+},
+{
+  q: "Which principle states that microfinance is a powerful instrument against poverty?",
+  options: ["Financial sustainability", "Microfinance as poverty alleviation", "Transparency in outreach", "Government as enabler"],
+  answer: 1
+},
+{
+  q: "Which principle highlights the need to build financial systems that serve the poor?",
+  options: ["Microcredit is always the answer", "Building financial systems for the poor", "Interest rate ceilings", "Donor subsidies must compete with private capital"],
+  answer: 1
+},
+{
+  q: "Financial sustainability in microfinance is necessary to achieve what?",
+  options: ["Short-term relief", "Reaching significant numbers of poor people", "Avoiding competition", "Government control"],
+  answer: 1
+},
+{
+  q: "Microfinance is about building what type of institutions?",
+  options: ["Temporary financial institutions", "Permanent local financial institutions", "Foreign-owned institutions", "Government-run institutions"],
+  answer: 1
+},
+{
+  q: "Which principle warns that microcredit is not always the solution?",
+  options: ["Microcredit is not always the answer", "Government as enabler", "Transparency in outreach", "Financial sustainability"],
+  answer: 0
+},
+{
+  q: "What is the effect of interest rate ceilings according to CGAP?",
+  options: ["They improve access to financial services", "They damage poor people's access to financial services", "They reduce competition", "They increase government control"],
+  answer: 1
+},
+{
+  q: "What role should government play in microfinance?",
+  options: ["Direct provider of financial services", "Enabler of financial services", "Competitor to MFIs", "Exclusive regulator of donor subsidies"],
+  answer: 1
+},
+{
+  q: "Donor subsidies should do what in relation to private sector capital?",
+  options: ["Compete with private capital", "Replace private capital", "Complement private capital", "Ignore private capital"],
+  answer: 2
+},
+{
+  q: "What is identified as the key constraint in microfinance?",
+  options: ["High interest rates", "Lack of institutional and human capacity", "Excessive donor subsidies", "Government involvement"],
+  answer: 1
+},
+{
+  q: "Which principle emphasizes the importance of transparency?",
+  options: ["Financial sustainability", "Transparency in finance and outreach", "Government as enabler", "Microcredit is always the answer"],
+  answer: 1
+},
+{
+  q: "Which of the following is NOT part of CARD MRI’s mission?",
+  options: ["Empowering women and families", "Providing microinsurance and livelihood services", "Partnering with agencies and organizations", "Focusing only on profit maximization"],
+  answer: 3
+},
+{
+  q: "Which factor considers the initial funding required for an MFI?",
+  options: ["Operating cost", "Capitalization", "Staffing", "Competition"],
+  answer: 1
+},
+{
+  q: "Which factor involves identifying who will be served by the MFI?",
+  options: ["Clients", "Products and services", "Methodology", "Location"],
+  answer: 0
+},
+{
+  q: "Which factor involves determining the area of coverage for an MFI?",
+  options: ["Staffing", "Location", "Competition", "Capitalization"],
+  answer: 1
+},
+{
+  q: "Which factor involves training and skills of personnel?",
+  options: ["Staffing", "Competition", "Capitalization", "Operating cost"],
+  answer: 0
+},
+{
+  q: "Which factor involves identifying other players in the financial ecosystem?",
+  options: ["Competition", "Staffing", "Capitalization", "Operating cost"],
+  answer: 0
+},
+{
+  q: "Which principle emphasizes that MFIs must be financially and operationally sufficient?",
+  options: ["Sustained access", "Poor people’s capacity to pay and save", "Financial and operational sufficiency", "Government as enabler"],
+  answer: 2
+},
+{
+  q: "Which principle emphasizes that donor subsidies should not compete with private capital?",
+  options: ["Financial sustainability", "Donor subsidies complement private capital", "Government as enabler", "Transparency in outreach"],
+  answer: 1
+},
+{
+  q: "Which principle emphasizes that microfinance is about building permanent institutions?",
+  options: ["Microcredit is always the answer", "Building permanent local financial institutions", "Government as enabler", "Transparency in outreach"],
+  answer: 1
+},
+{
+  q: "Which principle emphasizes that microfinance is a powerful instrument against poverty?",
+  options: ["Financial sustainability", "Microfinance as poverty alleviation", "Transparency in outreach", "Government as enabler"],
+  answer: 1
+},
+{
+  q: "Which principle emphasizes that the poor need more than just loans?",
+  options: ["Variety of financial services", "Microcredit is always the answer", "Government as enabler", "Transparency in outreach"],
+  answer: 0
+},
+{
+  q: "Which principle emphasizes that interest rate ceilings can harm access?",
+  options: ["Interest rate ceilings damage access", "Government as enabler", "Transparency in outreach", "Financial sustainability"],
+  answer: 0
+},
+{
+  q: "Which principle emphasizes that government should act as an enabler?",
+  options: ["Government as enabler", "Microcredit is always the answer", "Transparency in outreach", "Financial sustainability"],
+  answer: 0
+},
+{
+  q: "Which principle emphasizes that lack of institutional and human capacity is a key constraint?",
+  options: ["Financial sustainability", "Institutional and human capacity constraint", "Government as enabler", "Transparency in outreach"],
+  answer: 1
+},
+{
+  q: "Which principle emphasizes the importance of transparency in finance and outreach?",
+  options: ["Transparency in finance and outreach", "Government as enabler", "Microcredit is always the answer", "Financial sustainability"],
+  answer: 0
+}
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
