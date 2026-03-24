@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ART Topic 1 (48)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>ART Topic 1 (48)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+
+{
+  q: "Art is derived from the Latin word 'ars', which means what?",
+  options: ["Beauty", "Ability or skill", "Expression", "Creativity"],
+  answer: 1
+},
+{
+  q: "According to F. Zulueta, art is primarily the product of what?",
+  options: ["Man's need to express himself", "Nature's imitation", "Religious rituals", "Scientific discovery"],
+  answer: 0
+},
+{
+  q: "Which division of art is primarily seen and occupies space?",
+  options: ["Auditory Arts", "Visual Arts", "Performing Arts", "Applied Arts"],
+  answer: 1
+},
+{
+  q: "Music and poetry are examples of which division of art?",
+  options: ["Visual Arts", "Auditory Arts", "Combined Arts", "Applied Arts"],
+  answer: 1
+},
+{
+  q: "Drama, theatre, and cinema are examples of which division of art?",
+  options: ["Visual Arts", "Auditory Arts", "Combined/Performing Arts", "Applied Arts"],
+  answer: 2
+},
+{
+  q: "Which painting by Eugène Delacroix highlights the importance of events to keep them memorable?",
+  options: ["Starry Night", "Liberty Leading the People", "Mona Lisa", "The Persistence of Memory"],
+  answer: 1
+},
+{
+  q: "Which Filipino folk dance was cited as an example of art reflecting thoughts and beliefs?",
+  options: ["Tinikling", "Pandango sa Ilaw", "Singkil", "Maglalatik"],
+  answer: 1
+},
+{
+  q: "The Shrine of Valor was created by which artists?",
+  options: ["Fernando Amorsolo & Juan Luna", "Lorenzo del Castillo & Napoleon Abueva", "Botong Francisco & Guillermo Tolentino", "Vicente Manansala & Mauro Malang Santos"],
+  answer: 1
+},
+{
+  q: "Which of the following is NOT listed by Swara Swami (2016) as a benefit of art?",
+  options: ["Improves creativity skills", "Relieves stress", "Provides financial wealth", "Helps express emotions"],
+  answer: 2
+},
+{
+  q: "Why is art often described as a 'different language'?",
+  options: ["Because it requires grammar", "Because it can express things without words", "Because only artists understand it", "Because it uses dictionaries"],
+  answer: 1
+},
+{
+  q: "Which of the following best describes how art improves creativity skills?",
+  options: ["By memorizing historical facts", "By copying others exactly", "By encouraging experimentation and new perspectives", "By following strict rules only"],
+  answer: 2
+},
+{
+  q: "Which of the following is an example of art relieving stress?",
+  options: ["Playing guitar to calm anxiety", "Painting to showcase talent", "Writing poetry to express emotions", "Building architecture to preserve culture"],
+  answer: 0
+},
+{
+  q: "When a dancer makes the audience cry without speaking, art is functioning as what?",
+  options: ["A different language", "Stress relief", "Pure entertainment", "Creativity improvement"],
+  answer: 0
+},
+{
+  q: "Which dual benefit is experienced when an artist shares a personal poem with an audience?",
+  options: ["Relieves stress and stops creativity", "Expresses emotions and showcases talent", "Avoids language and hides talent", "Loses creativity and gains stress"],
+  answer: 1
+},
+{
+  q: "Which of the following best describes the primary focus of Visual Arts?",
+  options: ["Designing machines", "Painting, photography, sculpture", "Music and speech", "Live body performances"],
+  answer: 1
+},
+{
+  q: "What unique characteristic defines Film as an art expression?",
+  options: ["Relies only on written word", "Always performed live", "Purely static", "Captures moving images to tell stories"],
+  answer: 3
+},
+{
+  q: "What is the defining feature of Performance Art?",
+  options: ["Creating permanent statues", "Using the artist's body as medium", "Designing functional buildings", "Strictly scripted performances"],
+  answer: 1
+},
+{
+  q: "How does Poetry Performance differ from silent reading?",
+  options: ["Removes emotional context", "Requires audience to read along", "Uses voice, tone, and emotion", "Turns poem into a painting"],
+  answer: 2
+},
+{
+  q: "Architecture is best described as the art and science of what?",
+  options: ["Creating illusions", "Choreographing dances", "Writing scripts", "Designing and constructing buildings"],
+  answer: 3
+},
+{
+  q: "Which element is central to Dance as an art form?",
+  options: ["Projection of light", "Arrangement of text", "Rhythmic body movement to music", "Clay molding"],
+  answer: 2
+},
+{
+  q: "Literary Art primarily uses which medium?",
+  options: ["Building materials", "Body movements", "Language and words", "Paint and brushes"],
+  answer: 2
+},
+{
+  q: "Which art form combines acting, scenery, and lighting to tell a story?",
+  options: ["Sculpture", "Literature", "Photography", "Theater"],
+  answer: 3
+},
+{
+  q: "Applied Arts differs from Fine Arts because it focuses on what?",
+  options: ["Designing functional objects with aesthetics", "Writing non-fiction", "Creating art with no use", "Using only digital tools"],
+  answer: 0
+},
+{
+  q: "Which of the following best defines 'Art' broadly?",
+  options: ["Strict scientific facts", "Mass-produced objects", "Expression of human creativity and imagination", "Only paintings on canvas"],
+  answer: 2
+},
+{
+  q: "Which function of art is used as therapy for illnesses?",
+  options: ["Social Function", "Therapeutic Function", "Political Function", "Cultural Function"],
+  answer: 1
+},
+{
+  q: "Art as Artifact means what?",
+  options: ["It is purely decorative", "It represents ideas and technology of its time", "It is always functional", "It is only spiritual"],
+  answer: 1
+},
+{
+  q: "Which function of art preserves skills and knowledge across generations?",
+  options: ["Cultural Function", "Political Function", "Social Function", "Utilitarian Function"],
+  answer: 0
+},
+{
+  q: "Which function of art is highly subjective and depends on the artist?",
+  options: ["Social Function", "Personal Function", "Political Function", "Educational Function"],
+  answer: 1
+},
+{
+  q: "Political art is an example of which function of art?",
+  options: ["Social Function", "Therapeutic Function", "Utilitarian Function", "Spiritual Function"],
+  answer: 0
+},
+{
+  q: "Which function of art provides shelter, clothing, food, and medicine?",
+  options: ["Educational Function", "Utilitarian Function", "Cultural Function", "Therapeutic Function"],
+  answer: 1
+},
+{
+  q: "Which function of art reinforces identity and ideological connection to politics?",
+  options: ["Spiritual Function", "Political Function", "Personal Function", "Cultural Function"],
+  answer: 1
+},
+{
+  q: "Which function of art uses symbols and signs to illustrate knowledge?",
+  options: ["Educational Function", "Therapeutic Function", "Social Function", "Utilitarian Function"],
+  answer: 0
+},
+{
+  q: "Which function of art expresses spiritual beliefs and rituals?",
+  options: ["Political Function", "Spiritual Function", "Cultural Function", "Personal Function"],
+  answer: 1
+},
+{
+  q: "Which philosophical perspective sees art as imitation of nature?",
+  options: ["Art as Representation", "Art as Mimesis", "Art for Art's Sake", "Art as Escape"],
+  answer: 1
+},
+{
+  q: "According to Aristotle, art represents something through what?",
+  options: ["Symbols and signs", "Strict rules", "Pure imagination", "Mathematical formulas"],
+  answer: 0
+},
+{
+  q: "Which perspective states that art needs no justification and is valuable by itself?",
+  options: ["Art as Escape", "Art for Art's Sake", "Art as Representation", "Art as Functional"],
+  answer: 1
+},
+{
+  q: "Which perspective sees art as cathartic release of anxiety?",
+  options: ["Art as Escape", "Art as Functional", "Art as Representation", "Art as Mimesis"],
+  answer: 0
+},
+{
+  q: "Functional art aims to bring what into everyday life?",
+  options: ["Strict rules", "Creativity, beauty, and usefulness", "Political ideology", "Spiritual rituals"],
+  answer: 1
+},
+{
+  q: "Representational arts depict subjects that are what?",
+  options: ["Unrecognizable", "Easily recognized", "Purely abstract", "Only spiritual"],
+  answer: 1
+},
+{
+  q: "Non-representational arts appeal directly to what?",
+  options: ["Logic", "Senses through organization of elements", "Political ideology", "Historical facts"],
+  answer: 1
+},
+{
+  q: "Which art style features vibrant colors and less detail to subjects?",
+  options: ["Expressionism", "Impressionism", "Abstract", "Realism"],
+  answer: 1
+},
+{
+  q: "Which art style expresses emotions with bold strokes and abstract styles?",
+  options: ["Impressionism", "Expressionism", "Realism", "Cubism"],
+  answer: 1
+},
+{
+  q: "Still life artworks typically depict what?",
+  options: ["Grouped inanimate objects indoors", "Outdoor landscapes", "Human portraits", "Animal figures"],
+  answer: 0
+},
+{
+  q: "Fernando Amorsolo is well-known for romanticizing which subject?",
+  options: ["Cityscapes", "Philippine landscapes", "Portraits", "Still life"],
+  answer: 1
+},
+{
+  q: "Which Filipino painters are known for creating cityscapes?",
+  options: ["Vicente Manansala, Arturo Luz, Mauro Malang Santos", "Juan Luna, Botong Francisco, Guillermo Tolentino", "Fernando Amorsolo, Napoleon Abueva, Lorenzo del Castillo", "Jose Rizal, Andres Bonifacio, Emilio Aguinaldo"],
+  answer: 0
+},
+{
+  q: "Which animal has been a favorite subject of Filipino artists?",
+  options: ["Dog", "Carabao", "Horse", "Eagle"],
+  answer: 1
+},
+{
+  q: "Portraits are often created to capture what?",
+  options: ["Human face as index of character", "Animals in symbolic form", "Landscapes of nature", "Abstract emotions"],
+  answer: 0
+},
+{
+  q: "Which philosopher stated 'Educating the mind without educating the heart is no education at all'?",
+  options: ["Plato", "Aristotle", "Descartes", "Socrates"],
+  answer: 1
+},
+
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
