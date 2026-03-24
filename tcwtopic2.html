@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TCW Topic 2 (44)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>TCW Topic 2 (44)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+
+{
+  q: "Which of the following best describes Hunting and Gathering societies?",
+  options: ["Nomadic and egalitarian", "Urban and industrialized", "Knowledge-driven", "Consumerist and virtual"],
+  answer: 0
+},
+{
+  q: "What was considered the greatest advancement in Hunting and Gathering societies?",
+  options: ["Domestication of animals", "Fire", "Plow", "Internet"],
+  answer: 1
+},
+{
+  q: "Which society experienced the first social revolution through domestication of animals?",
+  options: ["Horticultural", "Pastoral", "Agrarian", "Industrial"],
+  answer: 1
+},
+{
+  q: "What key development began in Pastoral societies?",
+  options: ["Trading", "Internet", "Printing press", "Electricity"],
+  answer: 0
+},
+{
+  q: "Which type of society used simple tools for cultivation?",
+  options: ["Agrarian", "Horticultural", "Industrial", "Consumer"],
+  answer: 1
+},
+{
+  q: "What characteristic is associated with Horticultural societies?",
+  options: ["Nomadic lifestyle", "Semi-permanent settlements", "Knowledge capital", "Virtual interaction"],
+  answer: 1
+},
+{
+  q: "Which society experienced the second revolution with the plow, wheel, writing, and calendar?",
+  options: ["Industrial", "Agrarian", "Pastoral", "Post-Industrial"],
+  answer: 1
+},
+{
+  q: "Which innovations are linked to Agrarian societies?",
+  options: ["Metallurgy and weaving", "Internet and chat rooms", "Steam engine and coal", "Advertising and branding"],
+  answer: 0
+},
+{
+  q: "What invention drove Industrial societies?",
+  options: ["Plow", "Steam engine", "Internet", "Domestication of animals"],
+  answer: 1
+},
+{
+  q: "Industrial societies marked a shift from Gemeinschaft to Gesellschaft. What does Gesellschaft emphasize?",
+  options: ["Kinship-based ties", "Self-interest and urban life", "Nomadic equality", "Knowledge capital"],
+  answer: 1
+},
+{
+  q: "Which innovation is NOT associated with Industrial societies?",
+  options: ["Printing press", "Coal energy", "Internet", "Water transport"],
+  answer: 2
+},
+{
+  q: "What economic system rose during Industrial societies?",
+  options: ["Capitalism", "Feudalism", "Socialism", "Barter system"],
+  answer: 0
+},
+{
+  q: "Which revolution defines Post-Industrial societies?",
+  options: ["Domestication of animals", "Plow and wheel", "Knowledge and service orientation", "Steam engine"],
+  answer: 2
+},
+{
+  q: "In Post-Industrial societies, what becomes capital?",
+  options: ["Fire", "Knowledge", "Metallurgy", "Electricity"],
+  answer: 1
+},
+{
+  q: "Which sector dominates Post-Industrial societies?",
+  options: ["Agriculture", "Service and knowledge", "Manufacturing", "Pastoral trade"],
+  answer: 1
+},
+{
+  q: "Consumer society emerged from which age?",
+  options: ["Agrarian age", "Industrial age", "Post-Industrial age", "Virtual age"],
+  answer: 1
+},
+{
+  q: "What happens when goods exceed demand in Consumer societies?",
+  options: ["Barter resumes", "Advertising and sign value rise", "Nomadism returns", "Knowledge capital dominates"],
+  answer: 1
+},
+{
+  q: "Which of the following is an example of a consumer society brand?",
+  options: ["Coca-Cola", "Plow", "Steam engine", "Internet"],
+  answer: 0
+},
+{
+  q: "Consumer societies often lead to which issue?",
+  options: ["Throw-away culture", "Nomadic equality", "Knowledge capital", "Domestication of animals"],
+  answer: 0
+},
+{
+  q: "Fast fashion is a problem linked to which type of society?",
+  options: ["Agrarian", "Consumer", "Industrial", "Pastoral"],
+  answer: 1
+},
+{
+  q: "Which society is powered by the internet?",
+  options: ["Agrarian", "Industrial", "Technological/Virtual", "Pastoral"],
+  answer: 2
+},
+{
+  q: "Members of Technological/Virtual societies are called?",
+  options: ["Farmers", "Netizens", "Pastoralists", "Industrialists"],
+  answer: 1
+},
+{
+  q: "What type of interaction characterizes Technological/Virtual societies?",
+  options: ["Face-to-face", "Faceless and disembodied", "Nomadic consensus", "Kinship-based"],
+  answer: 1
+},
+{
+  q: "Which of the following accelerates globalization in Technological/Virtual societies?",
+  options: ["Plow", "Steam engine", "Virtual connectivity", "Domestication of animals"],
+  answer: 2
+},
+{
+  q: "Which society is consensus-based and egalitarian?",
+  options: ["Industrial", "Hunting and Gathering", "Consumer", "Post-Industrial"],
+  answer: 1
+},
+{
+  q: "Which society introduced military equipment as part of its development?",
+  options: ["Agrarian", "Industrial", "Pastoral", "Consumer"],
+  answer: 0
+},
+{
+  q: "Which revolution is associated with domestication of animals?",
+  options: ["First revolution", "Second revolution", "Third revolution", "Fourth revolution"],
+  answer: 0
+},
+{
+  q: "Which revolution is associated with the plow and wheel?",
+  options: ["First revolution", "Second revolution", "Third revolution", "Fourth revolution"],
+  answer: 1
+},
+{
+  q: "Which revolution is associated with knowledge and service orientation?",
+  options: ["First revolution", "Second revolution", "Third revolution", "Fourth revolution"],
+  answer: 3
+},
+{
+  q: "Which society is linked to urbanization and complex division of labor?",
+  options: ["Industrial", "Agrarian", "Pastoral", "Consumer"],
+  answer: 0
+},
+{
+  q: "Which society is characterized by prestige and reputation through goods?",
+  options: ["Consumer", "Industrial", "Agrarian", "Horticultural"],
+  answer: 0
+},
+{
+  q: "Which society is driven by mechanized production?",
+  options: ["Industrial", "Agrarian", "Pastoral", "Post-Industrial"],
+  answer: 0
+},
+{
+  q: "Which society is semi-permanent and relies on simple tools?",
+  options: ["Horticultural", "Agrarian", "Industrial", "Consumer"],
+  answer: 0
+},
+{
+  q: "Which society is nomadic and dependent on nature?",
+  options: ["Hunting and Gathering", "Pastoral", "Agrarian", "Industrial"],
+  answer: 0
+},
+{
+  q: "Which society introduced weaving and metallurgy?",
+  options: ["Agrarian", "Industrial", "Consumer", "Post-Industrial"],
+  answer: 0
+},
+{
+  q: "Which society is characterized by faceless interactions in chat rooms?",
+  options: ["Technological/Virtual", "Consumer", "Agrarian", "Pastoral"],
+  answer: 0
+},
+{
+  q: "Which society is associated with advertising and sign value?",
+  options: ["Consumer", "Industrial", "Agrarian", "Post-Industrial"],
+  answer: 0
+},
+{
+  q: "Which society is driven by globalization through virtual connectivity?",
+  options: ["Technological/Virtual", "Agrarian", "Industrial", "Pastoral"],
+  answer: 0
+},
+{
+  q: "Which society is dominated by service and knowledge sectors?",
+  options: ["Post-Industrial", "Agrarian", "Consumer", "Pastoral"],
+  answer: 0
+},
+{
+  q: "Which society is egalitarian and consensus-based?",
+  options: ["Hunting and Gathering", "Industrial", "Consumer", "Post-Industrial"],
+  answer: 0
+},
+{
+  q: "Which society is linked to the rise of capitalism?",
+  options: ["Industrial", "Agrarian", "Pastoral", "Consumer"],
+  answer: 0
+},
+{
+  q: "Which society is associated with the printing press?",
+  options: ["Industrial", "Agrarian", "Consumer", "Post-Industrial"],
+  answer: 0
+},
+{
+  q: "Which society is associated with electricity as an energy source?",
+  options: ["Industrial", "Agrarian", "Consumer", "Post-Industrial"],
+  answer: 0
+},
+{
+  q: "Which society is associated with globalization reshaping communities?",
+  options: ["All societies", "Only Industrial", "Only Agrarian", "Only Consumer"],
+  answer: 0
+}
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
