@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TCW Topic 3-1 (30)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>TCW Topic 3-1 (30)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+{
+  q: "Which of the following was a major cause of World War I characterized by the buildup of weapons and military preparedness?",
+  options: ["Nationalism", "Imperialism", "Militarism", "Assassination"],
+  answer: 2
+},
+{
+  q: "In 1900, which country began building a navy to compete with Great Britain?",
+  options: ["France", "Germany", "Russia", "Italy"],
+  answer: 1
+},
+{
+  q: "Between 1910 and 1914, which country had the highest percentage increase in defense expenditures?",
+  options: ["France", "Britain", "Russia", "Germany"],
+  answer: 3
+},
+{
+  q: "What is the definition of an alliance in the context of World War I?",
+  options: ["A military buildup", "An agreement between two or more countries", "A colonial expansion", "A declaration of war"],
+  answer: 1
+},
+{
+  q: "Which alliance included Germany, Austria-Hungary, and Italy?",
+  options: ["Triple Entente", "Triple Alliance", "Central Powers", "Allied Powers"],
+  answer: 1
+},
+{
+  q: "Which alliance included France, Great Britain, and Russia?",
+  options: ["Triple Alliance", "Triple Entente", "Central Powers", "Neutral States"],
+  answer: 1
+},
+{
+  q: "Nationalism in Europe arose strongly during the 19th century due to the unification of which two countries?",
+  options: ["France and Britain", "Germany and Italy", "Russia and Austria-Hungary", "Spain and Portugal"],
+  answer: 1
+},
+{
+  q: "Which of the following is defined as extreme pride or devotion to one’s country or culture?",
+  options: ["Imperialism", "Militarism", "Nationalism", "Colonialism"],
+  answer: 2
+},
+{
+  q: "Imperialism is best defined as:",
+  options: ["A buildup of military weapons", "A policy of extending a country’s power through diplomacy or military force", "An agreement between nations", "A declaration of independence"],
+  answer: 1
+},
+{
+  q: "Which country was considered the world’s largest empire with territories worldwide before WWI?",
+  options: ["France", "Germany", "Great Britain", "Russia"],
+  answer: 2
+},
+{
+  q: "The assassination of Archduke Franz Ferdinand was carried out by:",
+  options: ["Vladimir Lenin", "Gavrilo Princip", "Joseph Stalin", "Otto von Bismarck"],
+  answer: 1
+},
+{
+  q: "Austria-Hungary declared war on Serbia after discovering its government had ties to which group?",
+  options: ["Triple Entente", "Black Hand", "Central Powers", "League of Nations"],
+  answer: 1
+},
+{
+  q: "Which country mobilized its army to support Serbia after Austria-Hungary declared war?",
+  options: ["France", "Russia", "Germany", "Italy"],
+  answer: 1
+},
+{
+  q: "Germany declared war on Russia because:",
+  options: ["Russia invaded Germany", "Russia mobilized its army", "France attacked Germany", "Italy joined the Entente"],
+  answer: 1
+},
+{
+  q: "Germany declared war on France because France was allied with:",
+  options: ["Britain", "Russia", "Italy", "Belgium"],
+  answer: 1
+},
+{
+  q: "Germany’s invasion of which country forced Great Britain to join the war?",
+  options: ["France", "Russia", "Belgium", "Italy"],
+  answer: 2
+},
+{
+  q: "Which countries were part of the Allied Powers at the start of WWI?",
+  options: ["Germany, Austria-Hungary, Ottoman Empire", "France, Great Britain, Russia", "Italy, Spain, Portugal", "Belgium, Netherlands, Switzerland"],
+  answer: 1
+},
+{
+  q: "Which countries were part of the Central Powers?",
+  options: ["France, Britain, Russia", "Germany, Austria-Hungary, Ottoman Empire", "Italy, Spain, Portugal", "Belgium, Netherlands, Switzerland"],
+  answer: 1
+},
+{
+  q: "Which of the following countries remained neutral during WWI?",
+  options: ["Germany", "Italy", "Spain", "Russia"],
+  answer: 2
+},
+{
+  q: "Italy joined the war in which year?",
+  options: ["1914", "1915", "1916", "1917"],
+  answer: 1
+},
+{
+  q: "Romania joined the war in which year?",
+  options: ["1914", "1915", "1916", "1917"],
+  answer: 2
+},
+{
+  q: "Which mnemonic is commonly used to remember the causes of WWI?",
+  options: ["M.A.N.I.A.", "N.A.T.O.", "U.N.I.T.", "C.A.U.S.E."],
+  answer: 0
+},
+{
+  q: "Which cause of WWI involved competition for colonies and global dominance?",
+  options: ["Militarism", "Imperialism", "Nationalism", "Assassination"],
+  answer: 1
+},
+{
+  q: "Which cause of WWI involved agreements between nations for mutual defense?",
+  options: ["Militarism", "Imperialism", "Alliances", "Nationalism"],
+  answer: 2
+},
+{
+  q: "Which cause of WWI was the immediate trigger event?",
+  options: ["Militarism", "Imperialism", "Nationalism", "Assassination"],
+  answer: 3
+},
+{
+  q: "Which cause of WWI involved extreme devotion to one’s nation?",
+  options: ["Militarism", "Imperialism", "Nationalism", "Assassination"],
+  answer: 2
+},
+{
+  q: "Which cause of WWI involved the buildup of armies and navies?",
+  options: ["Militarism", "Imperialism", "Nationalism", "Assassination"],
+  answer: 0
+},
+{
+  q: "Which country had a 39% increase in defense spending between 1910 and 1914?",
+  options: ["France", "Britain", "Russia", "Germany"],
+  answer: 2
+},
+{
+  q: "Which country had a 73% increase in defense spending between 1910 and 1914?",
+  options: ["France", "Britain", "Russia", "Germany"],
+  answer: 3
+},
+{
+  q: "Which group was responsible for the assassination of Archduke Franz Ferdinand?",
+  options: ["Triple Alliance", "Black Hand", "Triple Entente", "Central Powers"],
+  answer: 1
+}
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
